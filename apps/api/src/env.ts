@@ -8,6 +8,7 @@ export const env = {
   cookieName: "access_token",
   cookieMaxAgeSeconds: COOKIE_MAX_AGE_SECONDS,
   jwtExpiresIn: "7d",
+  webOrigin: process.env.WEB_ORIGIN ?? "http://localhost:5173",
 };
 
 export function assertRequiredEnv(): void {

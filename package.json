@@ -6,8 +6,10 @@
   ],
   "scripts": {
     "dev:api": "npm run dev -w api",
+    "dev:web": "npm run dev -w web",
     "test:api": "npm test -w api",
     "typecheck:api": "npm run typecheck -w api",
+    "typecheck:web": "npm run typecheck -w web",
     "db:migrate": "npm run db:migrate -w api"
   },
   "engines": {

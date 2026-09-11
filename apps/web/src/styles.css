@@ -1,0 +1,121 @@
+:root {
+  color: #1c1917;
+  background: #f5f1eb;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+h1,
+h2 {
+  margin: 0 0 0.4rem;
+}
+
+.lede,
+.muted {
+  color: #57534e;
+  margin: 0 0 1.25rem;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #d6d3d1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox input {
+  width: auto;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 0.7rem 0.9rem;
+  background: #1c1917;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.link {
+  background: none;
+  color: #1c1917;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.error {
+  margin: 0;
+  color: #b91c1c;
+}
+
+.history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.history li {
+  display: grid;
+  gap: 0.15rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f5f5f4;
+}
+
+.history li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}

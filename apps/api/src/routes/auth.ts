@@ -73,4 +73,21 @@ export async function authRoutes(app: FastifyInstance): Promise<void> {
     app.clearAuthCookie(reply);
     return { ok: true };
   });
+
+  app.get(
+    "/auth/me",
+    { onRequest: [app.authenticate] },
+    async (request, reply) => {
+      const user = await app.prisma.user.findUnique({
+        where: { id: request.user.sub },
+        select: { id: true, email: true },
+      });
+
+      if (!user) {
+        return reply.code(401).send({ error: "Unauthorized" });
+      }
+
+      return { user: publicUser(user) };
+    },
+  );
 }

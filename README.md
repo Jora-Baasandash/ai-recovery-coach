@@ -6,7 +6,7 @@ This is a portfolio project focused on **TypeScript, Node.js, PostgreSQL, and pr
 
 ## Current status
 
-Milestone 2: Prisma, users, check-ins, cookie JWT auth. No LLM calls yet.
+Milestone 3: Prisma API + a minimal React UI for register/login and daily check-ins. No LLM calls yet.
 
 ## Requirements
 
@@ -22,6 +22,14 @@ npm install
 npm run db:migrate
 npm run dev:api
 ```
+
+In a second terminal:
+
+```bash
+npm run dev:web
+```
+
+Open http://localhost:5173. The UI talks to the API at http://localhost:3000 and sends the login cookie (`credentials: "include"`).
 
 This project's Docker Postgres is on **localhost:5434** so it does not collide with a local Postgres on 5432 or another container on 5433. `DATABASE_URL` in `.env` must use port `5434`.
 
@@ -64,6 +72,7 @@ Create a Groq key at [console.groq.com](https://console.groq.com) and put it in 
 | Command | What it does |
 | --- | --- |
 | `npm run dev:api` | Start the Fastify API with reload |
+| `npm run dev:web` | Start the React app |
 | `npm run test:api` | API tests (needs Docker Postgres) |
 | `npm run typecheck:api` | TypeScript check |
 | `npm run db:migrate` | Create/apply Prisma migrations |
@@ -72,5 +81,5 @@ Create a Groq key at [console.groq.com](https://console.groq.com) and put it in 
 
 ```
 apps/api    Fastify + TypeScript API
-apps/web    React UI (not started)
+apps/web    React UI (register, check-in, history)
 ```
