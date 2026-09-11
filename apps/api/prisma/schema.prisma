@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  checkIns     CheckIn[]
+
+  @@map("users")
+}
+
+model CheckIn {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  occurredOn    DateTime @db.Date @map("occurred_on")
+  urgeIntensity Int      @map("urge_intensity")
+  actedOnUrge   Boolean  @map("acted_on_urge")
+  trigger       String?
+  note          String?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, occurredOn])
+  @@map("check_ins")
+}

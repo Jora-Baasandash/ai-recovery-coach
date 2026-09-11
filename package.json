@@ -1,0 +1,16 @@
+{
+  "name": "ai-recovery-coach",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w api",
+    "test:api": "npm test -w api",
+    "typecheck:api": "npm run typecheck -w api",
+    "db:migrate": "npm run db:migrate -w api"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
