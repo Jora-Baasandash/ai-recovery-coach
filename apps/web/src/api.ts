@@ -5,6 +5,14 @@ export type User = {
   email: string;
 };
 
+export type CheckInStats = {
+  totalCheckIns: number;
+  checkInStreak: number;
+  last7AverageUrge: number | null;
+  last7ActedOnUrge: number;
+  last7DidNotAct: number;
+};
+
 export type CheckIn = {
   id: string;
   occurredOn: string;
@@ -62,6 +70,10 @@ export function logout() {
 
 export function listCheckIns() {
   return request<{ checkIns: CheckIn[] }>("/check-ins");
+}
+
+export function getCheckInStats() {
+  return request<CheckInStats>("/check-ins/stats");
 }
 
 export function createCheckIn(input: {

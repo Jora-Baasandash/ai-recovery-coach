@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "tsx --test --test-concurrency=1 src/app.test.ts src/auth.test.ts src/check-ins.test.ts",
+    "test": "tsx --test --test-concurrency=1 src/lib/streak.test.ts src/app.test.ts src/auth.test.ts src/check-ins.test.ts",
     "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
     "db:migrate:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
     "db:generate": "prisma generate"

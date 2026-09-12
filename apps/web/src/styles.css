@@ -38,6 +38,24 @@ h2 {
   margin-bottom: 1.25rem;
 }
 
+.stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stats div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.stats strong {
+  font-size: 1.4rem;
+}
+
+.stats span {
+  color: #57534e;
+  font-size: 0.85rem;
+}
+
 .card {
   background: #fff;
   border: 1px solid #e7e5e4;

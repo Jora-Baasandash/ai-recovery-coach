@@ -1,12 +1,14 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
   createCheckIn,
+  getCheckInStats,
   getMe,
   listCheckIns,
   login,
   logout,
   register,
   type CheckIn,
+  type CheckInStats,
   type User,
 } from "./api";
 
@@ -154,6 +156,7 @@ function CheckInScreen({
   onLogout: () => void;
 }) {
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
+  const [stats, setStats] = useState<CheckInStats | null>(null);
   const [occurredOn, setOccurredOn] = useState(today);
   const [urgeIntensity, setUrgeIntensity] = useState(3);
   const [actedOnUrge, setActedOnUrge] = useState(false);
@@ -162,8 +165,12 @@ function CheckInScreen({
   const [submitting, setSubmitting] = useState(false);
 
   async function refresh() {
-    const data = await listCheckIns();
-    setCheckIns(data.checkIns);
+    const [history, nextStats] = await Promise.all([
+      listCheckIns(),
+      getCheckInStats(),
+    ]);
+    setCheckIns(history.checkIns);
+    setStats(nextStats);
   }
 
   useEffect(() => {
@@ -211,6 +218,32 @@ function CheckInScreen({
           Log out
         </button>
       </header>
+
+      {stats ? (
+        <section className="card stats">
+          <div>
+            <strong>{stats.checkInStreak}</strong>
+            <span>day streak</span>
+          </div>
+          <div>
+            <strong>{stats.totalCheckIns}</strong>
+            <span>check-ins</span>
+          </div>
+          <div>
+            <strong>
+              {stats.last7AverageUrge === null ? "—" : stats.last7AverageUrge}
+            </strong>
+            <span>7-day avg urge</span>
+          </div>
+          <div>
+            <strong>
+              {stats.last7DidNotAct}/
+              {stats.last7ActedOnUrge + stats.last7DidNotAct || 0}
+            </strong>
+            <span>held back (7d)</span>
+          </div>
+        </section>
+      ) : null}
 
       <form className="card" onSubmit={handleSubmit}>
         {error ? <p className="error">{error}</p> : null}

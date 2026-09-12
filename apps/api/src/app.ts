@@ -6,6 +6,7 @@ import { prismaPlugin } from "./plugins/prisma.js";
 import { authRoutes } from "./routes/auth.js";
 import { checkInRoutes } from "./routes/check-ins.js";
 import { healthRoutes } from "./routes/health.js";
+import { statsRoutes } from "./routes/stats.js";
 
 export async function buildApp() {
   assertRequiredEnv();
@@ -19,6 +20,7 @@ export async function buildApp() {
   await app.register(authPlugin);
   await app.register(healthRoutes);
   await app.register(authRoutes);
+  await app.register(statsRoutes);
   await app.register(checkInRoutes);
 
   return app;

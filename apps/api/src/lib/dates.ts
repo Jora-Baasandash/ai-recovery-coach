@@ -11,3 +11,13 @@ export function parseOccurredOn(value: string | undefined): Date {
 export function formatOccurredOn(value: Date): string {
   return value.toISOString().slice(0, 10);
 }
+
+export function utcToday(): string {
+  return formatOccurredOn(new Date());
+}
+
+export function shiftUtcDate(isoDate: string, days: number): string {
+  const date = new Date(`${isoDate}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return formatOccurredOn(date);
+}

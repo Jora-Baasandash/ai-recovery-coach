@@ -63,6 +63,12 @@ List your check-ins:
 curl -s -b cookies.txt http://localhost:3000/check-ins
 ```
 
+Stats (SQL, not the LLM):
+
+```bash
+curl -s -b cookies.txt http://localhost:3000/check-ins/stats
+```
+
 ### LLM keys (not used yet)
 
 Create a Groq key at [console.groq.com](https://console.groq.com) and put it in `.env` as `GROQ_API_KEY`. Never commit `.env`. When real users exist, we will switch to OpenAI `gpt-5-nano` via `LLM_PROVIDER` / `OPENAI_API_KEY`.
