@@ -45,10 +45,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     ...init,
     credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(init?.headers ?? {}),
-    },
+    headers: init?.body
+      ? {
+          "Content-Type": "application/json",
+          ...(init.headers ?? {}),
+        }
+      : init?.headers,
   });
 
   const data = (await response.json().catch(() => ({}))) as T & ApiError;
