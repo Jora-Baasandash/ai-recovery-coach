@@ -6,7 +6,7 @@ This is a portfolio project focused on **TypeScript, Node.js, PostgreSQL, and pr
 
 ## Current status
 
-Milestone 3: Prisma API + a minimal React UI for register/login and daily check-ins. No LLM calls yet.
+Milestone 5: users log check-ins, see SQL stats, and can generate one structured Groq insight from recent history.
 
 ## Requirements
 
@@ -61,6 +61,12 @@ List your check-ins:
 
 ```bash
 curl -s -b cookies.txt http://localhost:3000/check-ins
+```
+
+Generate an insight for a check-in (LLM; check-in already saved):
+
+```bash
+curl -s -b cookies.txt -X POST http://localhost:3000/check-ins/CHECK_IN_ID/insight
 ```
 
 Stats (SQL, not the LLM):

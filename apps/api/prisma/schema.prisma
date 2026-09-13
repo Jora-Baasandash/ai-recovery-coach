@@ -13,6 +13,7 @@ model User {
   passwordHash String    @map("password_hash")
   createdAt    DateTime  @default(now()) @map("created_at")
   checkIns     CheckIn[]
+  insights     Insight[]
 
   @@map("users")
 }
@@ -26,8 +27,29 @@ model CheckIn {
   actedOnUrge   Boolean  @map("acted_on_urge")
   trigger       String?
   note          String?
-  createdAt     DateTime @default(now()) @map("created_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  insights      Insight[]
 
   @@unique([userId, occurredOn])
   @@map("check_ins")
+}
+
+model Insight {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceCheckInId String   @map("source_check_in_id")
+  sourceCheckIn   CheckIn  @relation(fields: [sourceCheckInId], references: [id], onDelete: Cascade)
+  promptVersion   String   @map("prompt_version")
+  model           String
+  inputCheckInIds String[] @map("input_check_in_ids")
+  output          Json
+  inputTokens     Int?     @map("input_tokens")
+  outputTokens    Int?     @map("output_tokens")
+  latencyMs       Int      @map("latency_ms")
+  status          String
+  error           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("insights")
 }

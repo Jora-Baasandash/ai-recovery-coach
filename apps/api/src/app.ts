@@ -2,10 +2,12 @@ import Fastify from "fastify";
 import { assertRequiredEnv } from "./env.js";
 import { authPlugin } from "./plugins/auth.js";
 import { corsPlugin } from "./plugins/cors.js";
+import { llmPlugin } from "./plugins/llm.js";
 import { prismaPlugin } from "./plugins/prisma.js";
 import { authRoutes } from "./routes/auth.js";
 import { checkInRoutes } from "./routes/check-ins.js";
 import { healthRoutes } from "./routes/health.js";
+import { insightRoutes } from "./routes/insights.js";
 import { statsRoutes } from "./routes/stats.js";
 
 export async function buildApp() {
@@ -17,11 +19,13 @@ export async function buildApp() {
 
   await app.register(corsPlugin);
   await app.register(prismaPlugin);
+  await app.register(llmPlugin);
   await app.register(authPlugin);
   await app.register(healthRoutes);
   await app.register(authRoutes);
   await app.register(statsRoutes);
   await app.register(checkInRoutes);
+  await app.register(insightRoutes);
 
   return app;
 }

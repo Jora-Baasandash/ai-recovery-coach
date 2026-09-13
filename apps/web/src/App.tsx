@@ -1,7 +1,9 @@
 import { useEffect, useState, type FormEvent } from "react";
 import {
   createCheckIn,
+  generateInsight,
   getCheckInStats,
+  getLatestInsight,
   getMe,
   listCheckIns,
   login,
@@ -9,6 +11,7 @@ import {
   register,
   type CheckIn,
   type CheckInStats,
+  type Insight,
   type User,
 } from "./api";
 
@@ -157,6 +160,8 @@ function CheckInScreen({
 }) {
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [stats, setStats] = useState<CheckInStats | null>(null);
+  const [insight, setInsight] = useState<Insight | null>(null);
+  const [insightBusy, setInsightBusy] = useState(false);
   const [occurredOn, setOccurredOn] = useState(today);
   const [urgeIntensity, setUrgeIntensity] = useState(3);
   const [actedOnUrge, setActedOnUrge] = useState(false);
@@ -165,12 +170,14 @@ function CheckInScreen({
   const [submitting, setSubmitting] = useState(false);
 
   async function refresh() {
-    const [history, nextStats] = await Promise.all([
+    const [history, nextStats, latestInsight] = await Promise.all([
       listCheckIns(),
       getCheckInStats(),
+      getLatestInsight().catch(() => null),
     ]);
     setCheckIns(history.checkIns);
     setStats(nextStats);
+    setInsight(latestInsight);
   }
 
   useEffect(() => {
@@ -185,7 +192,7 @@ function CheckInScreen({
     setSubmitting(true);
 
     try {
-      await createCheckIn({
+      const created = await createCheckIn({
         occurredOn,
         urgeIntensity,
         actedOnUrge,
@@ -195,10 +202,23 @@ function CheckInScreen({
       setTrigger("");
       setNote("");
       await refresh();
+      await requestInsight(created.id);
     } catch (err) {
       onError(err instanceof Error ? err.message : "Could not save check-in");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function requestInsight(checkInId: string) {
+    setInsightBusy(true);
+    try {
+      const next = await generateInsight(checkInId);
+      setInsight(next);
+    } catch (err) {
+      onError(err instanceof Error ? err.message : "Could not generate insight");
+    } finally {
+      setInsightBusy(false);
     }
   }
 
@@ -301,6 +321,38 @@ function CheckInScreen({
           {submitting ? "Saving…" : "Save check-in"}
         </button>
       </form>
+
+      <section className="card">
+        <h2>Insight</h2>
+        {insight ? (
+          <>
+            <p>
+              <strong>Pattern.</strong> {insight.output.pattern}
+            </p>
+            <p>
+              <strong>Try this.</strong> {insight.output.suggestedAction}
+            </p>
+            <p>
+              <strong>Keep going.</strong> {insight.output.encouragement}
+            </p>
+            <p className="muted">{insight.disclaimer}</p>
+          </>
+        ) : (
+          <p className="muted">Save a check-in to get a short insight.</p>
+        )}
+        <button
+          type="button"
+          disabled={insightBusy || checkIns.length === 0}
+          onClick={() => {
+            const latest = checkIns[0];
+            if (latest) {
+              void requestInsight(latest.id);
+            }
+          }}
+        >
+          {insightBusy ? "Generating…" : "Generate insight"}
+        </button>
+      </section>
 
       <section className="card">
         <h2>History</h2>

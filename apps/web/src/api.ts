@@ -13,6 +13,20 @@ export type CheckInStats = {
   last7DidNotAct: number;
 };
 
+export type Insight = {
+  id: string;
+  sourceCheckInId: string;
+  promptVersion: string;
+  model: string;
+  output: {
+    pattern: string;
+    suggestedAction: string;
+    encouragement: string;
+  };
+  disclaimer: string;
+  createdAt: string;
+};
+
 export type CheckIn = {
   id: string;
   occurredOn: string;
@@ -74,6 +88,16 @@ export function listCheckIns() {
 
 export function getCheckInStats() {
   return request<CheckInStats>("/check-ins/stats");
+}
+
+export function getLatestInsight() {
+  return request<Insight>("/insights/latest");
+}
+
+export function generateInsight(checkInId: string) {
+  return request<Insight>(`/check-ins/${checkInId}/insight`, {
+    method: "POST",
+  });
 }
 
 export function createCheckIn(input: {

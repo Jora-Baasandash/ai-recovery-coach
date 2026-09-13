@@ -11,6 +11,7 @@ const repoRoot = path.resolve(apiRoot, "../..");
 config({ path: path.join(repoRoot, ".env") });
 
 process.env.NODE_ENV = "test";
+process.env.LLM_PROVIDER = "fake";
 process.env.JWT_SECRET ??= "test-jwt-secret";
 
 const databaseUrl =

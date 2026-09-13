@@ -8,6 +8,7 @@ export async function createTestApp(): Promise<FastifyInstance> {
 }
 
 export async function resetDatabase(app: FastifyInstance): Promise<void> {
+  await app.prisma.insight.deleteMany();
   await app.prisma.checkIn.deleteMany();
   await app.prisma.user.deleteMany();
 }
