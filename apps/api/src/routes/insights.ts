@@ -1,7 +1,14 @@
 import type { FastifyInstance } from "fastify";
 import { formatOccurredOn } from "../lib/dates.js";
 import { parseStoredInsightOutput } from "../lib/insight-output.js";
+import {
+  CRISIS_RESOURCE_OUTPUT,
+  looksLikeCrisis,
+  SAFETY_PROMPT_VERSION,
+} from "../lib/safety.js";
 import { INSIGHT_CONTEXT_LIMIT, type InsightCheckIn } from "../llm/types.js";
+
+const VISIBLE_INSIGHT_STATUSES = ["success", "skipped_safety"];
 
 export async function insightRoutes(app: FastifyInstance): Promise<void> {
   app.post(
@@ -20,12 +27,33 @@ export async function insightRoutes(app: FastifyInstance): Promise<void> {
       }
 
       const existing = await app.prisma.insight.findFirst({
-        where: { sourceCheckInId: id, userId, status: "success" },
+        where: {
+          sourceCheckInId: id,
+          userId,
+          status: { in: VISIBLE_INSIGHT_STATUSES },
+        },
         orderBy: { createdAt: "desc" },
       });
 
       if (existing) {
         return serializeInsight(existing);
+      }
+
+      if (looksLikeCrisis(source.trigger, source.note)) {
+        const created = await app.prisma.insight.create({
+          data: {
+            userId,
+            sourceCheckInId: id,
+            promptVersion: SAFETY_PROMPT_VERSION,
+            model: "none",
+            inputCheckInIds: [id],
+            output: CRISIS_RESOURCE_OUTPUT,
+            latencyMs: 0,
+            status: "skipped_safety",
+          },
+        });
+
+        return reply.code(201).send(serializeInsight(created));
       }
 
       const history = await app.prisma.checkIn.findMany({
@@ -94,7 +122,10 @@ export async function insightRoutes(app: FastifyInstance): Promise<void> {
     { onRequest: [app.authenticate] },
     async (request, reply) => {
       const insight = await app.prisma.insight.findFirst({
-        where: { userId: request.user.sub, status: "success" },
+        where: {
+          userId: request.user.sub,
+          status: { in: VISIBLE_INSIGHT_STATUSES },
+        },
         orderBy: { createdAt: "desc" },
       });
 
@@ -112,6 +143,7 @@ function serializeInsight(insight: {
   sourceCheckInId: string;
   promptVersion: string;
   model: string;
+  status: string;
   output: unknown;
   createdAt: Date;
 }) {
@@ -120,6 +152,7 @@ function serializeInsight(insight: {
     sourceCheckInId: insight.sourceCheckInId,
     promptVersion: insight.promptVersion,
     model: insight.model,
+    status: insight.status,
     output: parseStoredInsightOutput(insight.output),
     disclaimer:
       "This is a support tool, not medical or therapeutic advice.",

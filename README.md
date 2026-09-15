@@ -1,17 +1,16 @@
 # AI Recovery Coach
 
-A backend-first habit-change app. Users log structured check-ins; the API stores them in PostgreSQL and later asks an LLM for one structured insight.
-
-This is a portfolio project focused on **TypeScript, Node.js, PostgreSQL, and production LLM engineering** (structured outputs, generation logging, safety). The product idea may change; the data and API contracts are the stable core.
+A backend-first habit-change app. Users log structured check-ins; PostgreSQL stores them; SQL computes stats; Groq may return one structured insight. This is a public portfolio project (TypeScript, Node.js, PostgreSQL, production-style LLM usage). It is not a medical or therapy product.
 
 ## Current status
 
-Milestone 5: users log check-ins, see SQL stats, and can generate one structured Groq insight from recent history.
+V1: auth, daily check-ins, SQL stats, Groq structured insights, crisis short-circuit (`skipped_safety` — Groq is not called), and docs.
 
 ## Requirements
 
 - Node.js 22+
 - Docker Desktop (for this project's Postgres)
+- A Groq API key for live insights ([console.groq.com](https://console.groq.com)). Tests use a fake provider and do not call Groq.
 
 ## Local setup
 
@@ -29,55 +28,18 @@ In a second terminal:
 npm run dev:web
 ```
 
-Open http://localhost:5173. The UI talks to the API at http://localhost:3000 and sends the login cookie (`credentials: "include"`).
+Open http://localhost:5173. Put `GROQ_API_KEY` in `.env` and restart the API before generating a live insight. Never commit `.env`.
 
-This project's Docker Postgres is on **localhost:5434** so it does not collide with a local Postgres on 5432 or another container on 5433. `DATABASE_URL` in `.env` must use port `5434`.
+This project's Docker Postgres is on **localhost:5434** (database `recovery_coach`). Other Postgres servers on 5432/5433 are not this app.
 
 ```bash
 curl http://localhost:3000/health
 ```
 
-Expected: `{"status":"ok","service":"api"}`
+## Docs
 
-### Auth and check-ins
-
-Register (saves an httpOnly cookie):
-
-```bash
-curl -s -c cookies.txt -H 'Content-Type: application/json' \
-  -d '{"email":"alex@example.com","password":"password12"}' \
-  http://localhost:3000/auth/register
-```
-
-Create today's check-in:
-
-```bash
-curl -s -b cookies.txt -H 'Content-Type: application/json' \
-  -d '{"occurredOn":"2026-09-11","urgeIntensity":4,"actedOnUrge":false,"trigger":"late night"}' \
-  http://localhost:3000/check-ins
-```
-
-List your check-ins:
-
-```bash
-curl -s -b cookies.txt http://localhost:3000/check-ins
-```
-
-Generate an insight for a check-in (LLM; check-in already saved):
-
-```bash
-curl -s -b cookies.txt -X POST http://localhost:3000/check-ins/CHECK_IN_ID/insight
-```
-
-Stats (SQL, not the LLM):
-
-```bash
-curl -s -b cookies.txt http://localhost:3000/check-ins/stats
-```
-
-### LLM keys (not used yet)
-
-Create a Groq key at [console.groq.com](https://console.groq.com) and put it in `.env` as `GROQ_API_KEY`. Never commit `.env`. When real users exist, we will switch to OpenAI `gpt-5-nano` via `LLM_PROVIDER` / `OPENAI_API_KEY`.
+- [Architecture](docs/architecture.md)
+- [API](docs/api.md)
 
 ## Scripts
 
@@ -93,5 +55,6 @@ Create a Groq key at [console.groq.com](https://console.groq.com) and put it in 
 
 ```
 apps/api    Fastify + TypeScript API
-apps/web    React UI (register, check-in, history)
+apps/web    React UI
+docs        Architecture and API notes
 ```

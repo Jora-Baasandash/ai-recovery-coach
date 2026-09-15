@@ -18,6 +18,7 @@ export type Insight = {
   sourceCheckInId: string;
   promptVersion: string;
   model: string;
+  status: string;
   output: {
     pattern: string;
     suggestedAction: string;
