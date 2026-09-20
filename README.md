@@ -4,7 +4,7 @@ A backend-first habit-change app. Users log structured check-ins; PostgreSQL sto
 
 ## Current status
 
-V1: auth, daily check-ins, SQL stats, Groq structured insights, crisis short-circuit (`skipped_safety` — Groq is not called), and docs.
+V1: auth, daily check-ins, SQL stats, Groq structured insights, crisis short-circuit (`skipped_safety` — Groq is not called), docs, and CI.
 
 ## Requirements
 
@@ -41,6 +41,18 @@ curl http://localhost:3000/health
 - [Architecture](docs/architecture.md)
 - [API](docs/api.md)
 
+## CI
+
+**CI** (continuous integration) is a machine that re-runs your checks on every push. Here that is GitHub Actions: `.github/workflows/api.yml`.
+
+On push to `main` and on pull requests it installs Node 22, starts Postgres, then runs typecheck and `npm run test:api`. Tests force `LLM_PROVIDER=fake`, so GitHub never needs a Groq key. A green check on the commit means “this revision still typechecks and the API tests passed,” not “Groq is healthy.”
+
+Locally (Docker Postgres on 5434 must be up):
+
+```bash
+npm run ci
+```
+
 ## Scripts
 
 | Command | What it does |
@@ -49,6 +61,7 @@ curl http://localhost:3000/health
 | `npm run dev:web` | Start the React app |
 | `npm run test:api` | API tests (needs Docker Postgres) |
 | `npm run typecheck:api` | TypeScript check |
+| `npm run ci` | Same checks GitHub Actions runs |
 | `npm run db:migrate` | Create/apply Prisma migrations |
 
 ## Repo layout

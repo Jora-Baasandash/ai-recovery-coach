@@ -62,6 +62,12 @@ The model is instructed that it is not a therapist or doctor. The UI always show
 
 Email/password. JWT in an httpOnly cookie. CORS allows `WEB_ORIGIN` with credentials so the Vite app can send the cookie across ports.
 
+## CI
+
+GitHub Actions (`.github/workflows/api.yml`) is the same loop as `npm run ci` on a fresh Ubuntu VM: checkout, `npm ci`, Prisma generate, typecheck, API tests against a workflow Postgres service.
+
+`NODE_ENV=test` selects the fake insight generator. That is why CI can stay green without `GROQ_API_KEY`. The check-in write path is also independent of Groq, so a provider outage is a 503 on insight generation, not a failed save.
+
 ## Local ports
 
 | Service | Port |
